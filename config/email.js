@@ -6,8 +6,8 @@ const transporter = nodemailer.createTransport({
     port: 587,
     secure: false,
     auth: {
-        user: process.env.EMAIL_USER || "otheruse998877@gmail.com",
-        pass: process.env.EMAIL_PASS || "donw omsn wemc qvzk"
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     },
     tls: {
         rejectUnauthorized: false
@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 // Send welcome email
 const sendWelcomeEmail = async (userEmail, userName) => {
     const mailOptions = {
-        from: process.env.EMAIL_USER || "otheruse998877@gmail.com",
+        from: process.env.EMAIL_USER || "",
         to: userEmail,
         subject: 'Welcome to ShopEase!',
         html: `
@@ -44,7 +44,7 @@ const sendWelcomeEmail = async (userEmail, userName) => {
 // Send order confirmation email
 const sendOrderConfirmationEmail = async (userEmail, userName, orderDetails) => {
     const mailOptions = {
-        from: process.env.EMAIL_USER || "otheruse998877@gmail.com",
+        from: process.env.EMAIL_USER,
         to: userEmail,
         subject: 'Order Confirmation - ShopEase',
         html: `
