@@ -39,6 +39,14 @@ const seedData = async () => {
     await Review.deleteMany({});
     console.log('✓ Cleared existing data');
 
+    // Drop old indexes that might cause conflicts
+    try {
+      await Order.collection.dropIndex('orderId_1');
+      console.log('✓ Dropped old orderId index');
+    } catch (error) {
+      // Index might not exist, continue
+    }
+
     // Create Users
     const hashedPassword = await bcrypt.hash('password123', 10);
     
