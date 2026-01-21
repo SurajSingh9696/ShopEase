@@ -10,7 +10,6 @@ connectDB();
 app.use(
     cors({
         origin: 'https://shopease-the-ecomm-site.onrender.com',
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
         credentials: true
     })
 );
