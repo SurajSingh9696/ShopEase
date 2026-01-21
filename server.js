@@ -28,6 +28,7 @@ app.use('/review', require('./routers/reviewRoutes'));
 app.use('/cart', require('./routers/cartRoutes'));
 app.use('/wishlist', require('./routers/wishlistRoutes'));
 app.use('/coupon', require('./routers/couponRoutes'));
+app.use('/password-reset', require('./routers/passwordResetRoutes'));
 
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);

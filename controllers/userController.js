@@ -33,7 +33,7 @@ const addAddress = async (req, res) => {
         const userId = req.user._id;
         const data = req.body; 
         const newAddress = await Address.create({ userId, ...data });
-        return res.status(201).json({ success: true, message: "Address added successfully", address: newAddress });
+        return res.status(201).json({ success: true, message: "Address added successfully", data: newAddress });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
@@ -43,7 +43,7 @@ const getAddresses = async (req, res) => {
     try {
         const userId = req.user._id;
         const addresses = await Address.find({ userId });
-        return res.status(200).json({ success: true, message: "Addresses fetched successfully", addresses });
+        return res.status(200).json({ success: true, message: "Addresses fetched successfully", data: addresses });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
@@ -58,7 +58,7 @@ const updateAddress =  async (req, res) => {
         if (!updatedAddress) {
             return res.status(404).json({ success: false, message: 'Address not found' });
         }   
-        return res.status(200).json({ success: true, message: "Address updated successfully", address: updatedAddress });
+        return res.status(200).json({ success: true, message: "Address updated successfully", data: updatedAddress });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
@@ -72,7 +72,7 @@ const deleteAddress = async (req, res) => {
         if (!deletedAddress) {
             return res.status(404).json({ success: false, message: 'Address not found' });
         }
-        return res.status(200).json({ success: true, message: "Address deleted successfully", address: deletedAddress });
+        return res.status(200).json({ success: true, message: "Address deleted successfully", data: deletedAddress });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Server Error', error: error.message });
     }
