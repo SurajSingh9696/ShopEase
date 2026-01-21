@@ -12,7 +12,7 @@ connectDB();
 const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:5174',
-    'https://shopease-frontend.onrender.com', // Update with your actual frontend URL
+    'https://shopease-the-ecomm-site.onrender.com/', // Update with your actual frontend URL
     process.env.FRONTEND_URL // Allow dynamic frontend URL from env
 ].filter(Boolean);
 
