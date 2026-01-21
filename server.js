@@ -9,7 +9,7 @@ dotenv.config();
 connectDB();
 app.use(
     cors({
-        origin: 'https://shopease-the-ecomm-site.onrender.com',
+        origin: '*',
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         credentials: true
     })
