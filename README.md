@@ -1,89 +1,316 @@
-# E-commerce API (Backend)
+# 🛍️ ShopEase - Modern E-Commerce Platform
 
-Base URL: `http://localhost:5000` (Development) | `https://your-app.onrender.com` (Production)
+A full-stack e-commerce application built with React, Node.js, Express, and MongoDB. ShopEase provides a complete online shopping experience with user authentication, product management, shopping cart, wishlist, order processing, and an admin dashboard.
 
-Authentication:
-- Login/Register set `accessToken` (short-lived) and `refreshToken` cookies.
-- Protected routes require `accessToken` cookie.
-- `adminOnly` endpoints also require `req.user.role === 'admin'`.
+![ShopEase](https://img.shields.io/badge/ShopEase-E--Commerce-blue)
+![Node.js](https://img.shields.io/badge/Node.js-v18+-green)
+![React](https://img.shields.io/badge/React-v18.2-blue)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
+![License](https://img.shields.io/badge/License-ISC-yellow)
 
-## 🚀 Deployment Issues?
-Having issues with authentication or email service on Render? See:
-- [QUICK_FIX.md](QUICK_FIX.md) - Fast solutions for common issues
-- [DEPLOYMENT_FIX_GUIDE.md](DEPLOYMENT_FIX_GUIDE.md) - Complete deployment guide
+## 🌟 Features
+
+### Customer Features
+- 🔐 **User Authentication**: Secure registration, login, and JWT-based authentication
+- 🔑 **Password Reset**: Email-based password recovery with verification codes
+- 🛒 **Shopping Cart**: Add, update, and remove items from cart
+- ❤️ **Wishlist**: Save favorite products for later
+- 🔍 **Product Search & Filter**: Browse and filter products by categories
+- 📦 **Order Management**: Place orders and track order history
+- ⭐ **Product Reviews**: Rate and review purchased products
+- 👤 **User Profile**: Manage personal information and addresses
+- 💳 **Secure Checkout**: Streamlined checkout process
+
+### Admin Features
+- 📊 **Admin Dashboard**: Overview of sales, orders, and users
+- 📦 **Product Management**: Create, update, and delete products
+- 🏷️ **Category Management**: Organize products into categories
+- 👥 **User Management**: View and manage user accounts
+- 📋 **Order Management**: View and update order statuses
+- 💰 **Coupon System**: Create and manage discount coupons
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **React 18.2** - UI library
+- **React Router DOM 6** - Client-side routing
+- **Axios** - HTTP client
+- **Tailwind CSS** - Utility-first CSS framework
+- **Lucide React** - Icon library
+- **React Hot Toast** - Toast notifications
+- **Vite** - Build tool and dev server
+
+### Backend
+- **Node.js** - JavaScript runtime
+- **Express 5** - Web framework
+- **MongoDB** - NoSQL database
+- **Mongoose 9** - MongoDB ODM
+- **JWT** - Token-based authentication
+- **Bcrypt.js** - Password hashing
+- **Nodemailer/Resend** - Email service
+- **Joi** - Data validation
+- **Cookie Parser** - Cookie handling
+- **CORS** - Cross-origin resource sharing
+
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed:
+- **Node.js** (v18 or higher)
+- **MongoDB** (local or Atlas account)
+- **npm** or **yarn**
+
+## 🚀 Installation
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yourusername/shopease.git
+cd shopease
+```
+
+### 2. Backend Setup
+
+```bash
+# Install backend dependencies
+npm install
+
+# Create .env file in root directory
+cp .env.example .env
+```
+
+Configure your `.env` file:
+```env
+# Database
+MONGODB_URL=your_mongodb_connection_string
+
+# Server
+PORT=5000
+NODE_ENV=development
+
+# JWT
+JWT_SECRET=your_jwt_secret_key
+JWT_EXPIRE=7d
+
+# Cookie
+COOKIE_EXPIRE=7
+
+# Frontend URL
+FRONTEND_URL=http://localhost:5173
+
+# Email (Nodemailer/Resend)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+# OR use Resend
+RESEND_API_KEY=your_resend_api_key
+```
+
+### 3. Frontend Setup
+
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install frontend dependencies
+npm install
+
+# Create .env file in frontend directory
+cp .env.example .env
+```
+
+Configure frontend `.env`:
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+### 4. Seed Database (Optional)
+
+To populate the database with sample data:
+```bash
+# From root directory
+npm run seed
+```
+
+## 🏃 Running the Application
+
+### Development Mode
+
+#### Terminal 1 - Backend
+```bash
+# From root directory
+npm run dev
+```
+Backend runs on `http://localhost:5000`
+
+#### Terminal 2 - Frontend
+```bash
+# From frontend directory
+cd frontend
+npm run dev
+```
+Frontend runs on `http://localhost:5173`
+
+### Production Mode
+
+#### Backend
+```bash
+npm start
+```
+
+#### Frontend
+```bash
+cd frontend
+npm run build
+npm run preview
+```
+
+## 📁 Project Structure
+
+```
+ShopEase/
+├── config/              # Configuration files (DB, email, cookies)
+├── controllers/         # Request handlers
+├── middlewares/         # Custom middleware (auth, roles)
+├── models/             # Mongoose schemas
+├── routers/            # API routes
+├── frontend/           # React application
+│   ├── src/
+│   │   ├── components/ # Reusable components
+│   │   ├── context/    # React Context (Auth, Cart, Wishlist)
+│   │   ├── pages/      # Page components
+│   │   ├── services/   # API services
+│   │   └── utils/      # Utility functions
+│   └── public/         # Static assets
+├── server.js           # Express server entry point
+├── seedData.js         # Database seeding script
+└── package.json        # Backend dependencies
+```
+
+## 🔑 API Endpoints
+
+### Authentication
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - User login
+- `POST /auth/logout` - User logout
+- `GET /auth/profile` - Get user profile
+
+### Password Reset
+- `POST /password-reset/request` - Request password reset
+- `POST /password-reset/verify-code` - Verify reset code
+- `POST /password-reset/reset` - Reset password
+
+### Products
+- `GET /product` - Get all products
+- `GET /product/:id` - Get product by ID
+- `POST /product` - Create product (Admin)
+- `PUT /product/:id` - Update product (Admin)
+- `DELETE /product/:id` - Delete product (Admin)
+
+### Categories
+- `GET /category` - Get all categories
+- `POST /category` - Create category (Admin)
+- `PUT /category/:id` - Update category (Admin)
+- `DELETE /category/:id` - Delete category (Admin)
+
+### Cart
+- `GET /cart` - Get user cart
+- `POST /cart/add` - Add item to cart
+- `PUT /cart/update` - Update cart item
+- `DELETE /cart/remove/:productId` - Remove item from cart
+
+### Wishlist
+- `GET /wishlist` - Get user wishlist
+- `POST /wishlist/add` - Add to wishlist
+- `DELETE /wishlist/remove/:productId` - Remove from wishlist
+
+### Orders
+- `GET /order` - Get user orders
+- `GET /order/:id` - Get order details
+- `POST /order` - Create new order
+- `PUT /order/:id` - Update order status (Admin)
+
+### Reviews
+- `GET /review/product/:productId` - Get product reviews
+- `POST /review` - Create review
+- `PUT /review/:id` - Update review
+- `DELETE /review/:id` - Delete review
+
+### Admin
+- `GET /admin/users` - Get all users
+- `GET /admin/orders` - Get all orders
+- `GET /admin/stats` - Get dashboard statistics
+
+## 👤 Default Admin Credentials (After Seeding)
+
+```
+Email: admin@shopease.com
+Password: Admin123!
+```
+
+## 🔒 Security Features
+
+- Password hashing with bcrypt
+- JWT token-based authentication
+- HTTP-only cookies for token storage
+- CORS protection
+- Input validation with Joi
+- Role-based access control (Admin/Customer)
+- Secure password reset flow
+
+## 🎨 UI Features
+
+- Responsive design (mobile, tablet, desktop)
+- Modern and clean interface
+- Loading states and spinners
+- Toast notifications for user feedback
+- Protected routes
+- Smooth scrolling and navigation
+
+## 📦 Deployment
+
+### Backend (Render/Railway/Heroku)
+1. Set environment variables in hosting platform
+2. Deploy from GitHub repository
+3. Ensure MongoDB Atlas is configured
+
+### Frontend (Vercel/Netlify)
+1. Build the frontend: `npm run build`
+2. Deploy the `dist` folder
+3. Configure environment variables
+4. Update backend CORS settings with production URL
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the ISC License.
+
+## 👨‍💻 Author
+
+**Suraj Singh**
+
+## 🐛 Known Issues
+
+None at the moment. Please report any issues in the Issues section.
+
+## 📧 Support
+
+For support, email support@shopease.com or open an issue in the repository.
+
+## 🙏 Acknowledgments
+
+- React team for the amazing library
+- Express team for the robust framework
+- MongoDB for the flexible database
+- Tailwind CSS for the utility-first styling approach
+- All open-source contributors
 
 ---
 
-## Auth (`/auth`)
-- **POST /auth/register** — Body: `{ name, age, email, password }` → `201 { success, message }` (sets cookies)
-- **POST /auth/login** — Body: `{ email, password }` → `200 { success, message }` (sets cookies)
-- **POST /auth/refresh** — Cookies: `refreshToken` → `200 { success, message }` (renews access token cookie)
-- **POST /auth/logout** — Clears `accessToken` and `refreshToken` → `200 { success, message }`
-
-## Password Reset (`/password-reset`)
-- **POST /password-reset/request** — Body: `{ email }` → `200 { success, message }` (sends 6-digit code to email)
-- **POST /password-reset/verify** — Body: `{ email, code }` → `200 { success, message }` (verifies the code)
-- **POST /password-reset/reset** — Body: `{ email, code, newPassword }` → `200 { success, message }` (resets password and clears code)
-  - Code expires in 15 minutes
-  - Email must exist in the system
-  - Code is deleted after successful password reset
-
-## User (`/user`) – requires `accessToken`
-- **GET /user/profile** → `200 { success, message, user }`
-- **GET /user/me** → `200 { success, message, user }`
-- **PUT /user/profile** — Body: any updatable user fields (e.g., `name`, `phone`, etc.) → `200 { success, message, user }`
-- **POST /user/addresses** — Body: `{ line1, line2?, city, state, postalCode }` → `201 { success, message, address }`
-- **GET /user/addresses** → `200 { success, message, addresses }`
-- **PUT /user/addresses/:id** — Body: address fields to change → `200 { success, message, address }`
-- **DELETE /user/addresses/:id** → `200 { success, message, address }`
-
-## Categories (`/category`) – requires `accessToken`
-- **GET /category** → `200 { success, message, data: categories }`
-- **POST /category** (admin) — Body: `{ name, parent }` (parent is category name or omit) → `201 { success, message }`
-- **PUT /category/:id** (admin) — Body: `{ name, parent }` → `200 { success, message }`
-- **DELETE /category/:id** (admin) → `200 { success, message }`
-
-## Products (`/product`) – requires `accessToken`
-- **GET /product** → `200 { success, message, data: products }`
-- **GET /product/:id** → `200 { success, message, data: product }`
-- **POST /product** (admin) — Body: `{ title, description, price, category: [string], categoryId: [ObjectId], salePrice?, sku, brand, images: [string], stock }` → `201 { success, message }`
-- **PUT /product/:id** (admin) — Body: any product fields to update → `200 { success, message, data: updatedProduct }`
-- **DELETE /product/:id** (admin) → `200 { success, message }`
-
-## Reviews (`/review`) – requires `accessToken`
-- **POST /review/:productId** — Body: `{ rating (1-5), comment }` → `201 { success, message }`
-- **GET /review/product/:productId** → `200 { success, message, data: reviews }`
-- **DELETE /review/:id** (admin) → `200 { success, message }`
-
-## Cart (`/cart`) – requires `accessToken`
-- **GET /cart** → `200 { success, message, data: cart | { data: [] } }`
-- **POST /cart/add** — Body: `{ productId, quantity }` → `200/201 { success, message }`
-- **PUT /cart/update/:itemId** — Body: `{ quantity }` → `200 { success, message }`
-- **DELETE /cart/remove/:itemId** → `200 { success, message }`
-- **DELETE /cart/clear** → `200 { success, message }`
-
-## Orders (`/order`) – requires `accessToken`
-- **POST /order** — Body: `{ shippingAddress: { line1, line2?, city, state, postalCode } }` (uses items from user cart) → `201 { success, message, data: order }`
-- **GET /order/:id** → `200 { success, data: order }`
-- **GET /order/user/:userId** → `200 { success, data: orders }`
-- **PUT /order/:id/status** (admin) — Body: `{ status: pending|processing|shipped|delivered|cancelled }` → `200 { success, message, data: order }`
-
-## Payments (`/payment`) – requires `accessToken`
-- **POST /payment** — Body: `{ orderId, amount, provider (stripe|paypal|razorpay|paytm|cash), transactionId }` → `201 { success, message }`
-- **GET /payment/:id** → `200 { success, message, data: payment }`
-- **GET /payment/user/:userId** → `200 { success, message, data: payments }`
-- **POST /payment/:id/verify** → `200 { success, message, data: payment }`
-- **PUT /payment/:id/status** (admin) — Body: `{ status: pending|completed|failed|refunded }`; if `completed`, order is updated to `processing` → `200 { success, message }`
-
-## Admin (`/admin`) – requires `accessToken` + admin role
-- **GET /admin/users** → `200 { success, message, data: users }`
-- **GET /admin/orders** → `200 { success, message, data: orders }`
-- **POST /admin/users/:id/block** — Body: `{ reason }` → `200 { success, message }`
-- **POST /admin/users/:id/unblock** → `200 { success, message }`
-- **PUT /admin/orders/:id/status** — Body: `{ status }` → `200 { success, message }`
-
-Error responses:
-- Validation/auth failures typically return `400` or `401` with `{ success: false, message }`.
-- Missing/invalid auth for admin-only returns `403`.
-- Not-found cases return `404` where implemented.
-- Unhandled errors return `500 { success: false, message: 'Server Error', error? }`.
+⭐ If you find this project useful, please consider giving it a star!
