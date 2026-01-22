@@ -10,8 +10,6 @@ connectDB();
 
 // CORS configuration for both localhost and production
 const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:5174',
     'https://shopease-the-ecomm-site.onrender.com'
 ].filter(Boolean);
 
