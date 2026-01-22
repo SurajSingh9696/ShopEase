@@ -26,6 +26,14 @@ const loginController = async (req, res) => {
             if (await bcrypt.compare(password, isAlreadyUser.password)) {
                 const accessToken = generateAccessToken({ id: isAlreadyUser._id, email: isAlreadyUser.email });
                 const refreshToken = generateRefreshToken({ id: isAlreadyUser._id, email: isAlreadyUser.email });
+                
+                console.log('🍪 Setting cookies for user:', email);
+                console.log('🔒 Cookie options:', {
+                    secure: accessCookieOptions.secure,
+                    sameSite: accessCookieOptions.sameSite,
+                    httpOnly: accessCookieOptions.httpOnly
+                });
+                
                 res.cookie('accessToken', accessToken, accessCookieOptions);
                 res.cookie('refreshToken', refreshToken, refreshCookieOptions);
                 return res.status(200).json({ success: true, message: "Login successful" });
@@ -35,6 +43,7 @@ const loginController = async (req, res) => {
             }
         }
     } catch (error) {
+        console.error('❌ Login error:', error);
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 }

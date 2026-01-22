@@ -3,7 +3,11 @@ const { Resend } = require("resend");
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Common sender (must be verified in Resend)
-const FROM_EMAIL = "ShopEase <otheruse998877@gmail.com>";
+// Use environment variable for production - MUST be a verified domain in Resend
+// Example: "ShopEase <noreply@yourdomain.com>"
+const FROM_EMAIL = "ShopEase <onboarding@resend.dev>";
+
+console.log('📧 Email service configured with sender:', FROM_EMAIL);
 
 // ===============================
 // WELCOME EMAIL

@@ -10,8 +10,12 @@ connectDB();
 
 // CORS configuration for both localhost and production
 const allowedOrigins = [
-    'https://shopease-the-ecomm-site.onrender.com'
+    process.env.FRONTEND_URL || 'https://shopease-the-ecomm-site.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:5173'
 ].filter(Boolean);
+
+console.log('🌐 Allowed CORS origins:', allowedOrigins);
 
 app.use(
     cors({
@@ -27,9 +31,11 @@ app.use(
             }
         },
         credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
-        exposedHeaders: ['set-cookie']
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+        exposedHeaders: ['set-cookie'],
+        preflightContinue: false,
+        optionsSuccessStatus: 204
     })
 );
 app.use(express.json());

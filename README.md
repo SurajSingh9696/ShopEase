@@ -1,11 +1,16 @@
 # E-commerce API (Backend)
 
-Base URL: `http://localhost:3030`
+Base URL: `http://localhost:5000` (Development) | `https://your-app.onrender.com` (Production)
 
 Authentication:
 - Login/Register set `accessToken` (short-lived) and `refreshToken` cookies.
 - Protected routes require `accessToken` cookie.
 - `adminOnly` endpoints also require `req.user.role === 'admin'`.
+
+## 🚀 Deployment Issues?
+Having issues with authentication or email service on Render? See:
+- [QUICK_FIX.md](QUICK_FIX.md) - Fast solutions for common issues
+- [DEPLOYMENT_FIX_GUIDE.md](DEPLOYMENT_FIX_GUIDE.md) - Complete deployment guide
 
 ---
 
