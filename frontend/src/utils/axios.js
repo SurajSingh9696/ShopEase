@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = "http://localhost:5000";
+// Backend is deployed separately on Render
+const API_BASE_URL = 'https://shopease-backend-02.onrender.com';
+
+console.log('🌐 API Base URL:', API_BASE_URL);
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 dotenv.config();
 connectDB();
@@ -22,6 +23,15 @@ app.use(
         origin: function (origin, callback) {
             // Allow requests with no origin (like mobile apps or curl requests)
             if (!origin) return callback(null, true);
+            
+            // In development, allow local network origins (for mobile testing)
+            if (process.env.NODE_ENV !== 'production' && origin) {
+                // Allow any localhost or local IP addresses (192.168.x.x, 10.x.x.x, etc.)
+                const isLocalNetwork = /^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)(:\d+)?$/.test(origin);
+                if (isLocalNetwork) {
+                    return callback(null, true);
+                }
+            }
             
             if (allowedOrigins.indexOf(origin) !== -1) {
                 callback(null, true);
@@ -55,6 +65,18 @@ app.use('/wishlist', require('./routers/wishlistRoutes'));
 app.use('/coupon', require('./routers/couponRoutes'));
 app.use('/password-reset', require('./routers/passwordResetRoutes'));
 
-app.listen(port, () => {
-    console.log(`Server is running on port: ${port}`);
+// Serve static files from frontend dist folder in production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'frontend/dist')));
+    
+    // Handle React routing - serve index.html for all non-API routes
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
+    });
+}
+
+app.listen(port, '0.0.0.0', () => {
+    console.log(`🚀 Server is running on port: ${port}`);
+    console.log(`📱 For mobile testing, use your local IP address (e.g., http://192.168.x.x:${port})`);
+    console.log(`💻 Local: http://localhost:${port}`);
 });
