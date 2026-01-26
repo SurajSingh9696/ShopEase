@@ -4,7 +4,6 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
-const path = require('path');
 
 dotenv.config();
 connectDB();
@@ -64,16 +63,6 @@ app.use('/cart', require('./routers/cartRoutes'));
 app.use('/wishlist', require('./routers/wishlistRoutes'));
 app.use('/coupon', require('./routers/couponRoutes'));
 app.use('/password-reset', require('./routers/passwordResetRoutes'));
-
-// Serve static files from frontend dist folder in production
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, 'frontend/dist')));
-    
-    // Handle React routing - serve index.html for all non-API routes
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
-    });
-}
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`🚀 Server is running on port: ${port}`);
