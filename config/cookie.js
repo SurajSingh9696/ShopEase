@@ -6,7 +6,7 @@ const accessCookieOptions = {
     httpOnly: true,
     secure: true,
     sameSite: 'none',
-    maxAge: 2 * 60 * 1000, // 2 minutes
+    maxAge: 15 * 60 * 1000, // 15 minutes
 }
 
 const refreshCookieOptions = {

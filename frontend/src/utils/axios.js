@@ -35,25 +35,24 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // Don't retry if this is a public endpoint or auth request
         const publicEndpoints = [
           '/auth/login',
           '/auth/register',
-          '/auth/refresh',
           '/product',
           '/category',
-          '/review',
-          '/user/me'
+          '/review'
         ];
-        
-        const isPublicEndpoint = publicEndpoints.some(endpoint => 
-          originalRequest.url?.includes(endpoint)
+
+        const url = originalRequest.url || '';
+
+        const isPublicEndpoint = publicEndpoints.some(endpoint =>
+          url.startsWith(endpoint)
         );
-        
+
         if (isPublicEndpoint) {
           return Promise.reject(error);
         }
-        
+
         await apiClient.post('/auth/refresh');
         return apiClient(originalRequest);
       } catch (refreshError) {
@@ -73,11 +72,11 @@ apiClient.interceptors.response.use(
           '/verify-reset-code',
           '/reset-password'
         ];
-        
-        const isPublicPage = publicPages.some(page => 
+
+        const isPublicPage = publicPages.some(page =>
           window.location.pathname === page || window.location.pathname.startsWith(page)
         );
-        
+
         // If refresh fails, redirect to login only if not on a public page
         if (!isPublicPage) {
           window.location.href = '/login';

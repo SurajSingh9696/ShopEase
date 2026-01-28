@@ -10,9 +10,7 @@ connectDB();
 
 // CORS configuration for both localhost and production
 const allowedOrigins = [
-    process.env.FRONTEND_URL || 'https://shopease-the-ecomm-site.onrender.com',
-    'http://localhost:3000',
-    'http://localhost:5173'
+    'https://shopease-the-ecomm-site.onrender.com',
 ].filter(Boolean);
 
 console.log('🌐 Allowed CORS origins:', allowedOrigins);
