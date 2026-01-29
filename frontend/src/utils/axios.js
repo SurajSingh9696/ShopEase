@@ -26,27 +26,13 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor for token refresh
+// Response interceptor - simplified like CrackIt
 apiClient.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-
-    // If the error status is 401 and there is no originalRequest._retry flag,
-    // it means the token has expired and we need to refresh it
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      // Public endpoints and pages
-      const publicEndpoints = [
-        '/auth/login',
-        '/auth/register',
-        '/auth/refresh',
-        '/product',
-        '/category',
-        '/review'
-      ];
-
+  (error) => {
+    // On 401 Unauthorized, clear storage and redirect to login
+    if (error.response?.status === 401) {
+      // Define public pages that don't require authentication
       const publicPages = [
         '/',
         '/login',
@@ -63,56 +49,18 @@ apiClient.interceptors.response.use(
         '/reset-password'
       ];
 
-      const url = originalRequest.url || '';
-      const isPublicEndpoint = publicEndpoints.some(endpoint =>
-        url.includes(endpoint)
-      );
       const isPublicPage = publicPages.some(page =>
         window.location.pathname === page || window.location.pathname.startsWith(page)
       );
 
-      // Don't retry public endpoints or if already on public page
-      if (isPublicEndpoint || isPublicPage) {
-        return Promise.reject(error);
-      }
+      // Clear all auth data
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
 
-      // Try to refresh the token
-      const refreshToken = localStorage.getItem('refreshToken');
-      if (!refreshToken) {
-        // No refresh token, clear everything and redirect
-        localStorage.clear();
+      // Redirect to login if not on public page
+      if (!isPublicPage) {
         window.location.href = '/login';
-        return Promise.reject(error);
-      }
-
-      try {
-        const response = await axios.post(
-          `${API_BASE_URL}/auth/refresh`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${refreshToken}`
-            }
-          }
-        );
-
-        if (response.data.success && response.data.accessToken) {
-          const { accessToken } = response.data;
-          localStorage.setItem('accessToken', accessToken);
-          
-          // Retry the original request with new token
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-          return apiClient(originalRequest);
-        }
-
-        // Refresh succeeded but no token - logout
-        throw new Error('No access token in refresh response');
-      } catch (refreshError) {
-        // Refresh failed - clear everything and redirect
-        console.error('Token refresh failed:', refreshError.message);
-        localStorage.clear();
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
       }
     }
 

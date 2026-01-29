@@ -5,11 +5,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 const { sendWelcomeEmail } = require('../config/email');
 
-const generateAccessToken = (user) => {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2m' });
-}
-const generateRefreshToken = (user) => {
-    return jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+const generateToken = (user) => {
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d' });
 }
 
 const loginController = async (req, res) => {
@@ -23,17 +20,15 @@ const loginController = async (req, res) => {
             return res.status(403).json({ success: false, message: "User is blocked, contact admin" });
         } else {
             if (await bcrypt.compare(password, isAlreadyUser.password)) {
-                const accessToken = generateAccessToken({ id: isAlreadyUser._id, email: isAlreadyUser.email });
-                const refreshToken = generateRefreshToken({ id: isAlreadyUser._id, email: isAlreadyUser.email });
+                const token = generateToken({ id: isAlreadyUser._id, email: isAlreadyUser.email });
                 
                 console.log('✅ Login successful for user:', email);
                 
-                // Return tokens in response body for localStorage storage
+                // Return token in response body for localStorage storage
                 return res.status(200).json({ 
                     success: true, 
                     message: "Login successful",
-                    accessToken,
-                    refreshToken,
+                    token,
                     user: {
                         _id: isAlreadyUser._id,
                         name: isAlreadyUser.name,
@@ -64,18 +59,16 @@ const registerController = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.create({ name, age, email, password: hashedPassword, phone });
         const user = await User.findOne({ email: email });
-        const accessToken = generateAccessToken({ id: user._id, email: user.email });
-        const refreshToken = generateRefreshToken({ id: user._id, email: user.email });
+        const token = generateToken({ id: user._id, email: user.email });
         
         // Send welcome email (non-blocking)
         sendWelcomeEmail(email, name).catch(err => console.error('Email error:', err));
         
-        // Return tokens in response body for localStorage storage
+        // Return token in response body for localStorage storage
         return res.status(201).json({ 
             success: true, 
             message: "User registered successfully",
-            accessToken,
-            refreshToken,
+            token,
             user: {
                 _id: user._id,
                 name: user.name,

@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error('Error parsing user data:', error);
         localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
       }
     }
@@ -58,7 +57,6 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setIsAuthenticated(false);
       localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
     }
   };
@@ -67,15 +65,14 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.register(userData);
       if (response.data.success) {
-        const { accessToken, refreshToken, user } = response.data;
+        const { token, user } = response.data;
         
-        // Store tokens and user data in localStorage
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
+        // Store token and user data in localStorage
+        localStorage.setItem('accessToken', token);
         localStorage.setItem('user', JSON.stringify(user));
         
         // Set authorization header
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         
         setUser(user);
         setIsAuthenticated(true);
@@ -95,15 +92,14 @@ export const AuthProvider = ({ children }) => {
       const response = await authAPI.login(credentials);
       if (response.data.success) {
         const { accessToken, refreshToken, user } = response.data;
+        token, user } = response.data;
         
-        // Store tokens and user data in localStorage
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
+        // Store token and user data in localStorage
+        localStorage.setItem('accessToken', token);
         localStorage.setItem('user', JSON.stringify(user));
         
         // Set authorization header
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-        
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${t
         setUser(user);
         setIsAuthenticated(true);
         
@@ -120,9 +116,8 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       // Clear tokens and user data
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
+      localStorage.r and user data
+      localStorage.removeItem('access
       delete apiClient.defaults.headers.common['Authorization'];
       
       setUser(null);
