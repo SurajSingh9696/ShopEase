@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
-const { accessCookieOptions, refreshCookieOptions } = require('../config/cookie');
 const { sendWelcomeEmail } = require('../config/email');
 
 const generateAccessToken = (user) => {
@@ -27,16 +26,23 @@ const loginController = async (req, res) => {
                 const accessToken = generateAccessToken({ id: isAlreadyUser._id, email: isAlreadyUser.email });
                 const refreshToken = generateRefreshToken({ id: isAlreadyUser._id, email: isAlreadyUser.email });
                 
-                console.log('🍪 Setting cookies for user:', email);
-                console.log('🔒 Cookie options:', {
-                    secure: accessCookieOptions.secure,
-                    sameSite: accessCookieOptions.sameSite,
-                    httpOnly: accessCookieOptions.httpOnly
-                });
+                console.log('✅ Login successful for user:', email);
                 
-                res.cookie('accessToken', accessToken, accessCookieOptions);
-                res.cookie('refreshToken', refreshToken, refreshCookieOptions);
-                return res.status(200).json({ success: true, message: "Login successful" });
+                // Return tokens in response body for localStorage storage
+                return res.status(200).json({ 
+                    success: true, 
+                    message: "Login successful",
+                    accessToken,
+                    refreshToken,
+                    user: {
+                        _id: isAlreadyUser._id,
+                        name: isAlreadyUser.name,
+                        email: isAlreadyUser.email,
+                        age: isAlreadyUser.age,
+                        phone: isAlreadyUser.phone,
+                        role: isAlreadyUser.role
+                    }
+                });
             }
             else {
                 return res.status(400).json({ success: false, message: "Invalid Password" });
@@ -60,13 +66,25 @@ const registerController = async (req, res) => {
         const user = await User.findOne({ email: email });
         const accessToken = generateAccessToken({ id: user._id, email: user.email });
         const refreshToken = generateRefreshToken({ id: user._id, email: user.email });
-        res.cookie('accessToken', accessToken, accessCookieOptions);
-        res.cookie('refreshToken', refreshToken, refreshCookieOptions);
         
         // Send welcome email (non-blocking)
         sendWelcomeEmail(email, name).catch(err => console.error('Email error:', err));
         
-        return res.status(201).json({ success: true, message: "User registered successfully" });
+        // Return tokens in response body for localStorage storage
+        return res.status(201).json({ 
+            success: true, 
+            message: "User registered successfully",
+            accessToken,
+            refreshToken,
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                age: user.age,
+                phone: user.phone,
+                role: user.role
+            }
+        });
     }
     catch (error) {
         return res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -75,7 +93,9 @@ const registerController = async (req, res) => {
 
 const refreshController = (req, res) => {
     try {
-        const refreshToken = req.cookies.refreshToken;
+        const authHeader = req.headers.authorization;
+        const refreshToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
+        
         if (!refreshToken) {
             return res.status(401).json({ success: false, message: "Refresh token not found" });
         }
@@ -84,8 +104,11 @@ const refreshController = (req, res) => {
                 return res.status(403).json({ success: false, message: "Invalid refresh token" });
             }
             const newAccessToken = generateAccessToken({ id: user.id, email: user.email });
-            res.cookie('accessToken', newAccessToken, accessCookieOptions);
-            return res.status(200).json({ success: true, message: "Access token refreshed successfully" });
+            return res.status(200).json({ 
+                success: true, 
+                message: "Access token refreshed successfully",
+                accessToken: newAccessToken
+            });
         });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Internal Server Error" });

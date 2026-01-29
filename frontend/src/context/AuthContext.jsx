@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI, userAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import apiClient from '../utils/axios';
 
 const AuthContext = createContext(null);
 
@@ -19,21 +20,46 @@ export const AuthProvider = ({ children }) => {
 
   // Check if user is authenticated on mount
   useEffect(() => {
-    checkAuth();
+    const token = localStorage.getItem('accessToken');
+    const userData = localStorage.getItem('user');
+    
+    if (token && userData) {
+      try {
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+      }
+    }
+    setLoading(false);
   }, []);
 
   const checkAuth = async () => {
     try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        setUser(null);
+        setIsAuthenticated(false);
+        return;
+      }
+      
       const response = await userAPI.getCurrentUser();
       if (response.data.success) {
         setUser(response.data.user);
         setIsAuthenticated(true);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
       }
     } catch (error) {
       setUser(null);
       setIsAuthenticated(false);
-    } finally {
-      setLoading(false);
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
     }
   };
 
@@ -41,9 +67,20 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.register(userData);
       if (response.data.success) {
+        const { accessToken, refreshToken, user } = response.data;
+        
+        // Store tokens and user data in localStorage
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // Set authorization header
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        
+        setUser(user);
+        setIsAuthenticated(true);
+        
         toast.success(response.data.message || 'Registration successful!');
-        // After registration, log in the user
-        await checkAuth();
         return { success: true };
       }
     } catch (error) {
@@ -57,7 +94,19 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.login(credentials);
       if (response.data.success) {
-        await checkAuth();
+        const { accessToken, refreshToken, user } = response.data;
+        
+        // Store tokens and user data in localStorage
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        // Set authorization header
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        
+        setUser(user);
+        setIsAuthenticated(true);
+        
         toast.success('Login successful!');
         return { success: true };
       }
@@ -70,7 +119,12 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await authAPI.logout();
+      // Clear tokens and user data
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+      delete apiClient.defaults.headers.common['Authorization'];
+      
       setUser(null);
       setIsAuthenticated(false);
       toast.success('Logged out successfully');

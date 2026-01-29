@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply transition-colors duration-200;
+  }
+  
+  body {
+    @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+  }
+
+  .font-display {
+    font-family: 'Space Grotesk', 'Poppins', sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'Space Grotesk', monospace;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 
+           text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 
+           shadow-lg hover:shadow-xl hover:scale-105 active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 
+           text-gray-900 dark:text-gray-100 px-6 py-3 rounded-xl font-semibold 
+           transition-all duration-300 hover:shadow-md hover:scale-105 active:scale-95;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 
+           dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-2xl;
+  }
+  
+  .input {
+    @apply w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl 
+           bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 
+           focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none 
+           transition-all duration-300;
+  }
+  
+  .gradient-bg {
+    @apply bg-gradient-to-br from-primary-500 via-purple-500 to-pink-500;
+  }
+  
+  .glass-effect {
+    @apply bg-white/10 dark:bg-gray-800/10 backdrop-blur-lg border border-white/20;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}

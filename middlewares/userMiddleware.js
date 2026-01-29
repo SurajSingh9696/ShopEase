@@ -4,7 +4,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const authenticateUser = async (req, res, next) => {
-    const token = req.cookies.accessToken;
+    // Get token from Authorization header
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
+    
     if (!token) {
         return res.status(401).json({ success: false, message: 'Access token is missing' });
     }
