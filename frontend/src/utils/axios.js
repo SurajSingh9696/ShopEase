@@ -55,7 +55,6 @@ apiClient.interceptors.response.use(
 
       // Clear all auth data
       localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
 
       // Redirect to login if not on public page

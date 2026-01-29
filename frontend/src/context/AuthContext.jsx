@@ -91,15 +91,15 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authAPI.login(credentials);
       if (response.data.success) {
-        const { accessToken, refreshToken, user } = response.data;
-        token, user } = response.data;
+        const { token, user } = response.data;
         
         // Store token and user data in localStorage
         localStorage.setItem('accessToken', token);
         localStorage.setItem('user', JSON.stringify(user));
         
         // Set authorization header
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${t
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
         setUser(user);
         setIsAuthenticated(true);
         
@@ -115,9 +115,9 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Clear tokens and user data
-      localStorage.r and user data
-      localStorage.removeItem('access
+      // Clear token and user data
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
       delete apiClient.defaults.headers.common['Authorization'];
       
       setUser(null);

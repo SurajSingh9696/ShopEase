@@ -5,7 +5,6 @@ export const authAPI = {
   register: (data) => apiClient.post('/auth/register', data),
   login: (data) => apiClient.post('/auth/login', data),
   logout: () => apiClient.post('/auth/logout'),
-  refresh: () => apiClient.post('/auth/refresh'),
 };
 
 // User APIs
